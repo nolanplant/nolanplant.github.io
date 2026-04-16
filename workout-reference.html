@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nolan's Gym Reference</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --card: #1a1a22;
+    --card2: #22222e;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --green: #3ecf8e;
+    --orange: #f59e42;
+    --red: #f76b6b;
+    --text: #f0f0f5;
+    --muted: #8888a0;
+    --border: #2e2e3e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
+  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  /* ── Week Grid ── */
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 24px; }
+  .day-chip {
+    background: var(--card);
+    border-radius: 10px;
+    text-align: center;
+    padding: 8px 2px;
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    user-select: none;
+  }
+  .day-chip .label { font-weight: 700; font-size: 10px; display: block; margin-bottom: 3px; }
+  .day-chip .type  { font-size: 9px; line-height: 1.2; display: block; }
+  .day-chip.upper  { border-color: var(--accent); color: var(--accent); }
+  .day-chip.lower  { border-color: var(--accent2); color: var(--accent2); }
+  .day-chip.cardio { border-color: var(--green); color: var(--green); }
+  .day-chip.rest   { opacity: 0.35; }
+  .day-chip.dimmed { opacity: 0.18 !important; transform: scale(0.95); }
+  .day-chip.active-day { transform: scale(1.08); box-shadow: 0 0 14px rgba(79,142,247,0.45); }
+
+  /* ── Section transitions ── */
+  .workout-section { transition: opacity 0.35s ease; }
+  .workout-section.faded { opacity: 0.09; pointer-events: none; }
+
+  /* ── Section headers ── */
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .section-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+  .badge-upper  { background: rgba(79,142,247,0.15);  color: var(--accent);  border: 1px solid rgba(79,142,247,0.3); }
+  .badge-lower  { background: rgba(124,92,191,0.15);  color: var(--accent2); border: 1px solid rgba(124,92,191,0.3); }
+  .badge-neck   { background: rgba(245,158,66,0.15);  color: var(--orange);  border: 1px solid rgba(245,158,66,0.3); }
+  .badge-cardio { background: rgba(62,207,142,0.15);  color: var(--green);   border: 1px solid rgba(62,207,142,0.3); }
+  .badge-note   { background: rgba(247,107,107,0.15); color: var(--red);     border: 1px solid rgba(247,107,107,0.3); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── Cards ── */
+  .card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; }
+  .superset-label {
+    background: var(--card2); padding: 6px 14px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--muted); display: flex; align-items: center; gap: 8px;
+  }
+  .superset-label .rounds {
+    margin-left: auto; background: var(--bg); padding: 2px 8px;
+    border-radius: 8px; color: var(--accent); font-size: 10px; border: 1px solid var(--border);
+  }
+
+  /* ── Exercise rows ── */
+  .exercise { border-top: 1px solid var(--border); padding: 10px 14px 12px; }
+  .card > .exercise:first-child,
+  .exercise:first-of-type { border-top: none; }
+  .ex-info-row { display: flex; align-items: center; gap: 10px; }
+  .ex-letter {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  .letter-a    { background: rgba(79,142,247,0.15);  color: var(--accent); }
+  .letter-b    { background: rgba(62,207,142,0.15);  color: var(--green); }
+  .letter-solo { background: rgba(124,92,191,0.15);  color: var(--accent2); }
+  .ex-text  { flex: 1; }
+  .ex-name  { font-weight: 600; font-size: 14px; }
+  .ex-note  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .ex-sets  { text-align: right; flex-shrink: 0; }
+  .sets-main { font-weight: 700; font-size: 14px; }
+  .sets-rest { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  /* ── Exercise Photos ── */
+  .ex-photo {
+    margin-top: 10px;
+    background: var(--card2);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ex-photo img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    display: block;
+  }
+  /* Wide images (neck nods, farmer carry) get cover to fill better */
+  .ex-photo.wide img { object-fit: cover; object-position: center; }
+  /* Square images centered with padding */
+  .ex-photo.square { height: 180px; }
+  .ex-photo.square img { height: 180px; object-fit: contain; }
+
+  /* ── Neck items ── */
+  .neck-item { border-top: 1px solid var(--border); padding: 11px 14px 12px; }
+  .neck-item:first-child { border-top: none; }
+  .neck-top { display: flex; align-items: flex-start; gap: 12px; }
+  .neck-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(245,158,66,0.15); color: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+  }
+  .neck-body { flex: 1; }
+  .neck-name   { font-weight: 600; font-size: 14px; }
+  .neck-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .neck-sets   { font-weight: 700; font-size: 13px; color: var(--orange); flex-shrink: 0; }
+  /* Neck photos: slightly shorter since they're head/neck crops */
+  .neck-photo {
+    margin-top: 10px;
+    background: var(--card2);
+    border-radius: 10px;
+    overflow: hidden;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .neck-photo img {
+    width: 100%;
+    height: 140px;
+    object-fit: contain;
+    display: block;
+  }
+  .neck-photo.wide img { object-fit: cover; }
+
+  /* ── Misc ── */
+  .tip-box {
+    background: rgba(79,142,247,0.07); border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 12px; padding: 12px 14px; font-size: 13px;
+    color: var(--muted); margin-bottom: 10px; line-height: 1.6;
+  }
+  .tip-box strong { color: var(--text); }
+  .cardio-card {
+    background: rgba(62,207,142,0.07); border: 1px solid rgba(62,207,142,0.2);
+    border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+  }
+  .cardio-icon  { font-size: 28px; }
+  .cardio-title { font-weight: 700; font-size: 15px; color: var(--green); }
+  .cardio-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .section-gap  { margin-bottom: 28px; }
+  footer { text-align: center; color: var(--muted); font-size: 11px; padding: 24px 0 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>Gym Plan 💪</h1>
+<p class="subtitle">45 min · Phase 1 · Tap a day to filter</p>
+
+<!-- ══════════ WEEK SCHEDULE ══════════ -->
+<div class="section-header">
+  <div class="section-badge badge-upper">Week Schedule</div>
+  <div class="section-line"></div>
+</div>
+<div class="week">
+  <div class="day-chip upper"  data-day="MON" onclick="toggleDay('MON')"><span class="label">MON</span><span class="type">Upper</span></div>
+  <div class="day-chip lower"  data-day="TUE" onclick="toggleDay('TUE')"><span class="label">TUE</span><span class="type">Lower+Core</span></div>
+  <div class="day-chip upper"  data-day="WED" onclick="toggleDay('WED')"><span class="label">WED</span><span class="type">Upper</span></div>
+  <div class="day-chip lower"  data-day="THU" onclick="toggleDay('THU')"><span class="label">THU</span><span class="type">Lower+Core</span></div>
+  <div class="day-chip upper"  data-day="FRI" onclick="toggleDay('FRI')"><span class="label">FRI</span><span class="type">Upper</span></div>
+  <div class="day-chip cardio" data-day="SAT" onclick="toggleDay('SAT')"><span class="label">SAT</span><span class="type">Zone 2</span></div>
+  <div class="day-chip rest"   data-day="SUN" onclick="toggleDay('SUN')"><span class="label">SUN</span><span class="type">Rest/Surf</span></div>
+</div>
+
+<div class="tip-box">
+  <strong>Superset rule:</strong> A → 30s rest → B → 60s rest → repeat all rounds. Keeps the session under 45 min.
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     UPPER BODY
+══════════════════════════════════════════════ -->
+<div class="workout-section" data-section="upper" id="sec-upper">
+  <div class="section-header">
+    <div class="section-badge badge-upper">Upper Body · 3×/week</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Superset 1 -->
+  <div class="card">
+    <div class="superset-label">Superset 1 — Push / Pull <span class="rounds">4 rounds</span></div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-a">A</div>
+        <div class="ex-text">
+          <div class="ex-name">Overhead Press</div>
+          <div class="ex-note">DB or barbell · control the descent</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">4 × 8–10</div><div class="sets-rest">rest 30s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Overhead Press.jpeg" alt="Overhead Press">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-b">B</div>
+        <div class="ex-text">
+          <div class="ex-name">Bent-Over Row</div>
+          <div class="ex-note">Hinge 45° · pull to lower chest</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">4 × 8–10</div><div class="sets-rest">rest 60s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Bent-Over Row.jpeg" alt="Bent-Over Row">
+      </div>
+    </div>
+  </div>
+
+  <!-- Superset 2 -->
+  <div class="card">
+    <div class="superset-label">Superset 2 — Chest / Rear Delt <span class="rounds">3 rounds</span></div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-a">A</div>
+        <div class="ex-text">
+          <div class="ex-name">Incline DB Press</div>
+          <div class="ex-note">30–45° bench · full stretch at bottom</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 10–12</div><div class="sets-rest">rest 30s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Incline-DB-Press.jpeg" alt="Incline DB Press">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-b">B</div>
+        <div class="ex-text">
+          <div class="ex-name">Face Pulls</div>
+          <div class="ex-note">Cable or band · pull to forehead · great for posture</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 15</div><div class="sets-rest">rest 60s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Face Pulls.jpeg" alt="Face Pulls">
+      </div>
+    </div>
+  </div>
+
+  <!-- Superset 3 -->
+  <div class="card">
+    <div class="superset-label">Superset 3 — Shoulder Isolation <span class="rounds">3 rounds</span></div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-a">A</div>
+        <div class="ex-text">
+          <div class="ex-name">Lateral Raises</div>
+          <div class="ex-note">Slight forward lean · lead with elbow</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 15</div><div class="sets-rest">rest 30s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Lateral Raises.jpeg" alt="Lateral Raises">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-b">B</div>
+        <div class="ex-text">
+          <div class="ex-name">Rear Delt Fly</div>
+          <div class="ex-note">Bent over · squeeze shoulder blades</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 15</div><div class="sets-rest">rest 60s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Rear Delt Fly.jpeg" alt="Rear Delt Fly">
+      </div>
+    </div>
+  </div>
+
+  <!-- Finisher -->
+  <div class="card">
+    <div class="superset-label">Finisher — Loaded Carry <span class="rounds">3 rounds</span></div>
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-solo">→</div>
+        <div class="ex-text">
+          <div class="ex-name">Farmer Carry</div>
+          <div class="ex-note">Heavy DBs · walk 40m · tall posture, shoulders packed</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 40m</div><div class="sets-rest">rest 60s</div></div>
+      </div>
+      <div class="ex-photo wide">
+        <img src="imgs/Farmer Carry.webp" alt="Farmer Carry">
+      </div>
+    </div>
+  </div>
+
+</div><!-- /upper -->
+<div class="section-gap"></div>
+
+
+<!-- ══════════════════════════════════════════════
+     LOWER BODY + CORE
+══════════════════════════════════════════════ -->
+<div class="workout-section" data-section="lower" id="sec-lower">
+  <div class="section-header">
+    <div class="section-badge badge-lower">Lower Body + Core · 2×/week</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-solo">1</div>
+        <div class="ex-text">
+          <div class="ex-name">Romanian Deadlift</div>
+          <div class="ex-note">Hinge at hips · feel hamstring stretch · back flat</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">4 × 8</div><div class="sets-rest">rest 90s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Romanian Deadlift.jpeg" alt="Romanian Deadlift">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-solo">2</div>
+        <div class="ex-text">
+          <div class="ex-name">Bulgarian Split Squat</div>
+          <div class="ex-note">Rear foot elevated · front foot forward · brutal but effective</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 10/leg</div><div class="sets-rest">rest 90s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Bulgarian Split Squat.jpeg" alt="Bulgarian Split Squat">
+      </div>
+    </div>
+  </div>
+
+  <!-- Ab Circuit -->
+  <div class="card">
+    <div class="superset-label">Ab Circuit — no rest between, 60s after each round <span class="rounds">3 rounds</span></div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-a">A</div>
+        <div class="ex-text">
+          <div class="ex-name">Dead Bug</div>
+          <div class="ex-note">Lower back glued to floor · opposite arm+leg extend slowly</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 12</div></div>
+      </div>
+      <div class="ex-photo square">
+        <img src="imgs/Dead Bug.jpeg" alt="Dead Bug">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-b">B</div>
+        <div class="ex-text">
+          <div class="ex-name">Hollow Body Hold</div>
+          <div class="ex-note">Arms overhead · lower back flat · hold the tension</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 20s</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Hollow Body Hold.png" alt="Hollow Body Hold">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-solo">C</div>
+        <div class="ex-text">
+          <div class="ex-name">Pallof Press</div>
+          <div class="ex-note">Cable or band · resist rotation · 12 each side</div>
+        </div>
+        <div class="ex-sets"><div class="sets-main">3 × 12/side</div></div>
+      </div>
+      <div class="ex-photo">
+        <img src="imgs/Pallof Press.jpeg" alt="Pallof Press">
+      </div>
+    </div>
+  </div>
+
+</div><!-- /lower -->
+<div class="section-gap"></div>
+
+
+<!-- ══════════════════════════════════════════════
+     ZONE 2 CARDIO
+══════════════════════════════════════════════ -->
+<div class="workout-section" data-section="cardio" id="sec-cardio">
+  <div class="section-header">
+    <div class="section-badge badge-cardio">Zone 2 Cardio · Saturday</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="cardio-card">
+    <div class="cardio-icon">🏃</div>
+    <div>
+      <div class="cardio-title">35 min Easy Cardio</div>
+      <div class="cardio-desc">Run, bike, swim, or row · hold a full conversation the whole time · Zone 2 = ~60–70% max HR · this is NOT a hard session</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     NECK PROTOCOL
+══════════════════════════════════════════════ -->
+<div class="workout-section" data-section="neck" id="sec-neck">
+  <div class="section-header">
+    <div class="section-badge badge-neck">Neck Protocol · Every Session · 5 min</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card">
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num">1</div>
+        <div class="neck-body">
+          <div class="neck-name">Chin Tucks</div>
+          <div class="neck-detail">Pull chin straight back (double chin). Against wall for feedback. Hold 5 sec.</div>
+        </div>
+        <div class="neck-sets">15 reps</div>
+      </div>
+      <div class="neck-photo">
+        <img src="imgs/Chin-Tucks.jpeg" alt="Chin Tucks">
+      </div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num">2</div>
+        <div class="neck-body">
+          <div class="neck-name">Neck Nods</div>
+          <div class="neck-detail">Slow, controlled yes-motion. Against gravity, not momentum.</div>
+        </div>
+        <div class="neck-sets">15 reps</div>
+      </div>
+      <div class="neck-photo wide">
+        <img src="imgs/Neck Nods.jpeg" alt="Neck Nods">
+      </div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num">3</div>
+        <div class="neck-body">
+          <div class="neck-name">Suboccipital Release</div>
+          <div class="neck-detail">Hands behind skull, gently nod chin down and hold.</div>
+        </div>
+        <div class="neck-sets">30s hold</div>
+      </div>
+      <div class="neck-photo">
+        <img src="imgs/Suboccipital Release.jpeg" alt="Suboccipital Release">
+      </div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num">4</div>
+        <div class="neck-body">
+          <div class="neck-name">Platysma Activation</div>
+          <div class="neck-detail">Open mouth wide, pull corners of lips down hard. Hold 10 sec.</div>
+        </div>
+        <div class="neck-sets">10 reps</div>
+      </div>
+      <div class="neck-photo">
+        <img src="imgs/Platysma Activation.jpeg" alt="Platysma Activation">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tip-box">
+    <strong>Posture reminder:</strong> Tongue on roof of mouth (behind teeth), lips closed, teeth lightly touching. Do this constantly — desk, car, surfing.
+  </div>
+</div><!-- /neck -->
+<div class="section-gap"></div>
+
+
+<!-- ══════════════════════════════════════════════
+     GOLDEN RULES
+══════════════════════════════════════════════ -->
+<div class="workout-section" data-section="rules" id="sec-rules">
+  <div class="section-header">
+    <div class="section-badge badge-note">Golden Rules</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="tip-box">
+    <strong>Progressive overload:</strong> Add reps or weight every week. Hit the top of the rep range easily? Go heavier next session.<br><br>
+    <strong>Surf days:</strong> Surf counts. On heavy surf days cut to neck protocol + one superset only.<br><br>
+    <strong>Fasted training:</strong> Ideal to train before first meal. Coffee is fine. Boosts fat oxidation.<br><br>
+    <strong>Protein first:</strong> Every meal starts with protein. Hit 0.8–1g per lb of bodyweight daily.
+  </div>
+</div>
+
+<footer>Phase 1 · Weeks 1–8 </footer>
+
+
+<!-- ══════════════════════════════════════════════
+     JS — Day Filter + Scroll
+══════════════════════════════════════════════ -->
+<script>
+  const dayMap = {
+    MON: ['upper', 'neck'],
+    TUE: ['lower', 'neck'],
+    WED: ['upper', 'neck'],
+    THU: ['lower', 'neck'],
+    FRI: ['upper', 'neck'],
+    SAT: ['cardio'],
+    SUN: []
+  };
+
+  let activeDay = null;
+
+  function toggleDay(day) {
+    const chips    = document.querySelectorAll('.day-chip');
+    const sections = document.querySelectorAll('.workout-section[data-section]');
+
+    if (activeDay === day) {
+      activeDay = null;
+      chips.forEach(c => { c.classList.remove('active-day', 'dimmed'); });
+      sections.forEach(s => { s.classList.remove('faded'); });
+      return;
+    }
+
+    activeDay = day;
+    const show = dayMap[day] || [];
+
+    chips.forEach(c => {
+      if (c.dataset.day === day) {
+        c.classList.add('active-day');
+        c.classList.remove('dimmed');
+      } else {
+        c.classList.remove('active-day');
+        c.classList.add('dimmed');
+      }
+    });
+
+    sections.forEach(s => {
+      show.includes(s.dataset.section)
+        ? s.classList.remove('faded')
+        : s.classList.add('faded');
+    });
+
+    if (show.length > 0) {
+      const target = document.getElementById('sec-' + show[0]);
+      if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+  }
+</script>
+
+</body>
+</html>
