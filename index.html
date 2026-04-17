@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nolan's Gym Reference</title>
+<title>Workout Routine</title>
 <style>
   :root {
     --bg: #0f0f13;
@@ -18,7 +18,9 @@
     --muted: #8888a0;
     --border: #2e2e3e;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     background: var(--bg);
     color: var(--text);
@@ -29,11 +31,17 @@
     max-width: 480px;
     margin: 0 auto;
   }
+
   h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
   .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
-  /* ── Week Grid ── */
-  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 24px; }
+  .week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 24px;
+  }
+
   .day-chip {
     background: var(--card);
     border-radius: 10px;
@@ -46,8 +54,20 @@
     transition: opacity 0.25s ease, transform 0.15s ease, box-shadow 0.2s ease;
     user-select: none;
   }
-  .day-chip .label { font-weight: 700; font-size: 10px; display: block; margin-bottom: 3px; }
-  .day-chip .type  { font-size: 9px; line-height: 1.2; display: block; }
+
+  .day-chip .label {
+    font-weight: 700;
+    font-size: 10px;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .day-chip .type {
+    font-size: 9px;
+    line-height: 1.2;
+    display: block;
+  }
+
   .day-chip.upper  { border-color: var(--accent); color: var(--accent); }
   .day-chip.lower  { border-color: var(--accent2); color: var(--accent2); }
   .day-chip.cardio { border-color: var(--green); color: var(--green); }
@@ -55,53 +75,210 @@
   .day-chip.dimmed { opacity: 0.18 !important; transform: scale(0.95); }
   .day-chip.active-day { transform: scale(1.08); box-shadow: 0 0 14px rgba(79,142,247,0.45); }
 
-  /* ── Section transitions ── */
   .workout-section { transition: opacity 0.35s ease; }
   .workout-section.faded { opacity: 0.09; pointer-events: none; }
 
-  /* ── Section headers ── */
-  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .section-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .section-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
   .badge-upper  { background: rgba(79,142,247,0.15);  color: var(--accent);  border: 1px solid rgba(79,142,247,0.3); }
   .badge-lower  { background: rgba(124,92,191,0.15);  color: var(--accent2); border: 1px solid rgba(124,92,191,0.3); }
   .badge-neck   { background: rgba(245,158,66,0.15);  color: var(--orange);  border: 1px solid rgba(245,158,66,0.3); }
   .badge-cardio { background: rgba(62,207,142,0.15);  color: var(--green);   border: 1px solid rgba(62,207,142,0.3); }
   .badge-note   { background: rgba(247,107,107,0.15); color: var(--red);     border: 1px solid rgba(247,107,107,0.3); }
+
   .section-line { flex: 1; height: 1px; background: var(--border); }
 
-  /* ── Cards ── */
-  .card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; }
-  .superset-label {
-    background: var(--card2); padding: 6px 14px;
-    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
-    color: var(--muted); display: flex; align-items: center; gap: 8px;
-  }
-  .superset-label .rounds {
-    margin-left: auto; background: var(--bg); padding: 2px 8px;
-    border-radius: 8px; color: var(--accent); font-size: 10px; border: 1px solid var(--border);
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    overflow: hidden;
   }
 
-  /* ── Exercise rows ── */
+  .superset-label {
+    background: var(--card2);
+    padding: 6px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .superset-label .rounds {
+    margin-left: auto;
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 8px;
+    color: var(--accent);
+    font-size: 10px;
+    border: 1px solid var(--border);
+  }
+
   .exercise { border-top: 1px solid var(--border); padding: 10px 14px 12px; }
   .card > .exercise:first-child,
   .exercise:first-of-type { border-top: none; }
-  .ex-info-row { display: flex; align-items: center; gap: 10px; }
-  .ex-letter {
-    width: 26px; height: 26px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 800; flex-shrink: 0;
+
+  .ex-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  .letter-a    { background: rgba(79,142,247,0.15);  color: var(--accent); }
-  .letter-b    { background: rgba(62,207,142,0.15);  color: var(--green); }
-  .letter-solo { background: rgba(124,92,191,0.15);  color: var(--accent2); }
-  .ex-text  { flex: 1; }
-  .ex-name  { font-weight: 600; font-size: 14px; }
-  .ex-note  { font-size: 11px; color: var(--muted); margin-top: 1px; }
-  .ex-sets  { text-align: right; flex-shrink: 0; }
+
+  .ex-letter {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .letter-a    { background: rgba(79,142,247,0.15); color: var(--accent); }
+  .letter-b    { background: rgba(62,207,142,0.15); color: var(--green); }
+  .letter-solo { background: rgba(124,92,191,0.15); color: var(--accent2); }
+
+  .ex-text { flex: 1; }
+  .ex-name { font-weight: 600; font-size: 14px; }
+  .ex-note { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .ex-sets {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
   .sets-main { font-weight: 700; font-size: 14px; }
   .sets-rest { font-size: 10px; color: var(--muted); margin-top: 1px; }
 
-  /* ── Exercise Photos ── */
+  .set-tracker {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .set-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.03),
+      0 6px 14px rgba(0,0,0,0.18);
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.14s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .set-pill:hover {
+    transform: translateY(-1px);
+    border-color: rgba(79,142,247,0.35);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 10px 20px rgba(0,0,0,0.24);
+  }
+
+  .set-pill:active {
+    transform: scale(0.98);
+  }
+
+  .set-pill input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .set-pill .set-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.35);
+    transition: all 0.18s ease;
+  }
+
+  .set-pill .set-check::after {
+    content: "✓";
+    font-size: 12px;
+    font-weight: 900;
+    color: #fff;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: all 0.16s ease;
+  }
+
+  .set-pill .set-label {
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .set-pill.is-checked {
+    background: linear-gradient(135deg, rgba(79,142,247,0.22), rgba(62,207,142,0.18));
+    border-color: rgba(79,142,247,0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 10px 22px rgba(79,142,247,0.16);
+  }
+
+  .set-pill.is-checked .set-check {
+    background: linear-gradient(135deg, rgba(79,142,247,0.95), rgba(62,207,142,0.95));
+    border-color: transparent;
+    box-shadow: 0 0 0 4px rgba(79,142,247,0.12);
+  }
+
+  .set-pill.is-checked .set-check::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .set-pill.is-checked .set-label {
+    color: #ffffff;
+  }
+
+  .exercise.completed .ex-name,
+  .neck-item.completed .neck-name {
+    color: var(--green);
+  }
+
+  .exercise.completed .sets-main,
+  .neck-item.completed .neck-sets {
+    color: var(--green);
+  }
+
   .ex-photo {
     margin-top: 10px;
     background: var(--card2);
@@ -112,33 +289,47 @@
     align-items: center;
     justify-content: center;
   }
+
   .ex-photo img {
     width: 100%;
     height: 160px;
     object-fit: contain;
     display: block;
   }
-  /* Wide images (neck nods, farmer carry) get cover to fill better */
+
   .ex-photo.wide img { object-fit: cover; object-position: center; }
-  /* Square images centered with padding */
   .ex-photo.square { height: 180px; }
   .ex-photo.square img { height: 180px; object-fit: contain; }
 
-  /* ── Neck items ── */
   .neck-item { border-top: 1px solid var(--border); padding: 11px 14px 12px; }
   .neck-item:first-child { border-top: none; }
-  .neck-top { display: flex; align-items: flex-start; gap: 12px; }
-  .neck-num {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(245,158,66,0.15); color: var(--orange);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+
+  .neck-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
   }
+
+  .neck-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(245,158,66,0.15);
+    color: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
   .neck-body { flex: 1; }
-  .neck-name   { font-weight: 600; font-size: 14px; }
+  .neck-name { font-weight: 600; font-size: 14px; }
   .neck-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .neck-sets   { font-weight: 700; font-size: 13px; color: var(--orange); flex-shrink: 0; }
-  /* Neck photos: slightly shorter since they're head/neck crops */
+  .neck-sets { font-weight: 700; font-size: 13px; color: var(--orange); flex-shrink: 0; }
+
   .neck-photo {
     margin-top: 10px;
     background: var(--card2);
@@ -149,30 +340,115 @@
     align-items: center;
     justify-content: center;
   }
+
   .neck-photo img {
     width: 100%;
     height: 140px;
     object-fit: contain;
     display: block;
   }
+
   .neck-photo.wide img { object-fit: cover; }
 
-  /* ── Misc ── */
   .tip-box {
-    background: rgba(79,142,247,0.07); border: 1px solid rgba(79,142,247,0.2);
-    border-radius: 12px; padding: 12px 14px; font-size: 13px;
-    color: var(--muted); margin-bottom: 10px; line-height: 1.6;
+    background: rgba(79,142,247,0.07);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.6;
   }
+
   .tip-box strong { color: var(--text); }
+
   .cardio-card {
-    background: rgba(62,207,142,0.07); border: 1px solid rgba(62,207,142,0.2);
-    border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+    background: rgba(62,207,142,0.07);
+    border: 1px solid rgba(62,207,142,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
   }
-  .cardio-icon  { font-size: 28px; }
+
+  .cardio-icon { font-size: 28px; }
   .cardio-title { font-weight: 700; font-size: 15px; color: var(--green); }
   .cardio-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .section-gap  { margin-bottom: 28px; }
-  footer { text-align: center; color: var(--muted); font-size: 11px; padding: 24px 0 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+
+  .section-gap { margin-bottom: 28px; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 24px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .hidden-photo { display: none !important; }
+
+  .exercise.completed {
+    opacity: 0.35;
+    filter: grayscale(0.6);
+    transition: opacity 0.25s ease, filter 0.25s ease;
+    pointer-events: none;
+  }
+
+  .exercise.completed .ex-name,
+  .exercise.completed .ex-note,
+  .exercise.completed .sets-main,
+  .exercise.completed .sets-rest {
+    color: var(--muted);
+  }
+
+  .exercise.completed .set-pill {
+    opacity: 0.8;
+    pointer-events: auto;
+  }
+
+  .exercise.completed .ex-photo img {
+    opacity: 0.5;
+  }
+.log-day-btn {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(79,142,247,0.95), rgba(62,207,142,0.9));
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(79,142,247,0.22);
+  transition: transform 0.14s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.log-day-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(79,142,247,0.28);
+}
+
+.log-day-btn:active {
+  transform: scale(0.98);
+}
+
+.log-day-btn.is-loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.log-day-btn.is-success {
+  background: linear-gradient(135deg, rgba(62,207,142,0.95), rgba(62,207,142,0.82));
+}
+
+.log-day-btn.is-error {
+  background: linear-gradient(135deg, rgba(247,107,107,0.95), rgba(245,158,66,0.88));
+}
 </style>
 </head>
 <body>
@@ -180,11 +456,11 @@
 <h1>Gym Plan 💪</h1>
 <p class="subtitle">45 min · Phase 1 · Tap a day to filter</p>
 
-<!-- ══════════ WEEK SCHEDULE ══════════ -->
 <div class="section-header">
   <div class="section-badge badge-upper">Week Schedule</div>
   <div class="section-line"></div>
 </div>
+
 <div class="week">
   <div class="day-chip upper"  data-day="MON" onclick="toggleDay('MON')"><span class="label">MON</span><span class="type">Upper</span></div>
   <div class="day-chip lower"  data-day="TUE" onclick="toggleDay('TUE')"><span class="label">TUE</span><span class="type">Lower+Core</span></div>
@@ -199,17 +475,12 @@
   <strong>Superset rule:</strong> A → 30s rest → B → 60s rest → repeat all rounds. Keeps the session under 45 min.
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     UPPER BODY
-══════════════════════════════════════════════ -->
 <div class="workout-section" data-section="upper" id="sec-upper">
   <div class="section-header">
     <div class="section-badge badge-upper">Upper Body · 3×/week</div>
     <div class="section-line"></div>
   </div>
 
-  <!-- Superset 1 -->
   <div class="card">
     <div class="superset-label">Superset 1 — Push / Pull <span class="rounds">4 rounds</span></div>
 
@@ -220,10 +491,14 @@
           <div class="ex-name">Overhead Press</div>
           <div class="ex-note">DB or barbell · control the descent</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">4 × 8–10</div><div class="sets-rest">rest 30s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">4 × 8–10</div>
+          <div class="sets-rest">rest 30s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="4"></div>
       <div class="ex-photo">
-        <img src="imgs/Overhead Press.jpeg" alt="Overhead Press">
+        <img src="imgs/Overhead Press.jpeg" alt="Overhead Press" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -234,17 +509,20 @@
           <div class="ex-name">Bent-Over Row</div>
           <div class="ex-note">Hinge 45° · pull to lower chest</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">4 × 8–10</div><div class="sets-rest">rest 60s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">4 × 8–10</div>
+          <div class="sets-rest">rest 60s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="4"></div>
       <div class="ex-photo">
-        <img src="imgs/Bent-Over Row.jpeg" alt="Bent-Over Row">
+        <img src="imgs/Bent-Over Row.jpeg" alt="Bent-Over Row" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
   </div>
 
-  <!-- Superset 2 -->
   <div class="card">
-    <div class="superset-label">Superset 2 — Chest / Rear Delt <span class="rounds">3 rounds</span></div>
+    <div class="superset-label">Superset 2 — Chest / Width <span class="rounds">3 rounds</span></div>
 
     <div class="exercise">
       <div class="ex-info-row">
@@ -253,10 +531,14 @@
           <div class="ex-name">Incline DB Press</div>
           <div class="ex-note">30–45° bench · full stretch at bottom</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 10–12</div><div class="sets-rest">rest 30s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 10–12</div>
+          <div class="sets-rest">rest 30s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Incline-DB-Press.jpeg" alt="Incline DB Press">
+        <img src="imgs/Incline-DB-Press.jpeg" alt="Incline DB Press" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -264,20 +546,23 @@
       <div class="ex-info-row">
         <div class="ex-letter letter-b">B</div>
         <div class="ex-text">
-          <div class="ex-name">Face Pulls</div>
-          <div class="ex-note">Cable or band · pull to forehead · great for posture</div>
+          <div class="ex-name">Lat Pulldown or Assisted Pull-Up</div>
+          <div class="ex-note">Build back width · helps posture and overall frame</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 15</div><div class="sets-rest">rest 60s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 10–12</div>
+          <div class="sets-rest">rest 60s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Face Pulls.jpeg" alt="Face Pulls">
+        <img src="imgs/Lat Pulldown or Assisted Pull-Up.jpeg" alt="Lat Pulldown or Assisted Pull-Up" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
   </div>
 
-  <!-- Superset 3 -->
   <div class="card">
-    <div class="superset-label">Superset 3 — Shoulder Isolation <span class="rounds">3 rounds</span></div>
+    <div class="superset-label">Superset 3 — Delts / Posture <span class="rounds">3 rounds</span></div>
 
     <div class="exercise">
       <div class="ex-info-row">
@@ -286,10 +571,14 @@
           <div class="ex-name">Lateral Raises</div>
           <div class="ex-note">Slight forward lean · lead with elbow</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 15</div><div class="sets-rest">rest 30s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 15</div>
+          <div class="sets-rest">rest 30s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Lateral Raises.jpeg" alt="Lateral Raises">
+        <img src="imgs/Lateral Raises.jpeg" alt="Lateral Raises" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -297,18 +586,21 @@
       <div class="ex-info-row">
         <div class="ex-letter letter-b">B</div>
         <div class="ex-text">
-          <div class="ex-name">Rear Delt Fly</div>
-          <div class="ex-note">Bent over · squeeze shoulder blades</div>
+          <div class="ex-name">Face Pulls</div>
+          <div class="ex-note">Cable or band · pull to forehead · posture focus</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 15</div><div class="sets-rest">rest 60s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 15</div>
+          <div class="sets-rest">rest 60s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Rear Delt Fly.jpeg" alt="Rear Delt Fly">
+        <img src="imgs/Face Pulls.jpeg" alt="Face Pulls" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
   </div>
 
-  <!-- Finisher -->
   <div class="card">
     <div class="superset-label">Finisher — Loaded Carry <span class="rounds">3 rounds</span></div>
     <div class="exercise">
@@ -318,21 +610,21 @@
           <div class="ex-name">Farmer Carry</div>
           <div class="ex-note">Heavy DBs · walk 40m · tall posture, shoulders packed</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 40m</div><div class="sets-rest">rest 60s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 40m</div>
+          <div class="sets-rest">rest 60s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo wide">
-        <img src="imgs/Farmer Carry.webp" alt="Farmer Carry">
+        <img src="imgs/Farmer Carry.webp" alt="Farmer Carry" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
   </div>
+</div>
 
-</div><!-- /upper -->
 <div class="section-gap"></div>
 
-
-<!-- ══════════════════════════════════════════════
-     LOWER BODY + CORE
-══════════════════════════════════════════════ -->
 <div class="workout-section" data-section="lower" id="sec-lower">
   <div class="section-header">
     <div class="section-badge badge-lower">Lower Body + Core · 2×/week</div>
@@ -344,13 +636,17 @@
       <div class="ex-info-row">
         <div class="ex-letter letter-solo">1</div>
         <div class="ex-text">
-          <div class="ex-name">Romanian Deadlift</div>
-          <div class="ex-note">Hinge at hips · feel hamstring stretch · back flat</div>
+          <div class="ex-name">Goblet Squat or Leg Press (Optional)</div>
+          <div class="ex-note">Only if time allows · quick burn</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">4 × 8</div><div class="sets-rest">rest 90s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 10–12</div>
+          <div class="sets-rest">rest 75s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Romanian Deadlift.jpeg" alt="Romanian Deadlift">
+        <img src="imgs/Goblet Squat or Leg Press.jpeg" alt="Goblet Squat or Leg Press" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -358,18 +654,39 @@
       <div class="ex-info-row">
         <div class="ex-letter letter-solo">2</div>
         <div class="ex-text">
+          <div class="ex-name">Romanian Deadlift</div>
+          <div class="ex-note">Hinge at hips · feel hamstring stretch · back flat</div>
+        </div>
+        <div class="ex-sets">
+          <div class="sets-main">4 × 8</div>
+          <div class="sets-rest">rest 90s</div>
+        </div>
+      </div>
+      <div class="set-tracker" data-sets="4"></div>
+      <div class="ex-photo">
+        <img src="imgs/Romanian Deadlift.jpeg" alt="Romanian Deadlift" onerror="this.parentElement.classList.add('hidden-photo')">
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-solo">3</div>
+        <div class="ex-text">
           <div class="ex-name">Bulgarian Split Squat</div>
           <div class="ex-note">Rear foot elevated · front foot forward · brutal but effective</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 10/leg</div><div class="sets-rest">rest 90s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 10/leg</div>
+          <div class="sets-rest">rest 90s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Bulgarian Split Squat.jpeg" alt="Bulgarian Split Squat">
+        <img src="imgs/Bulgarian Split Squat.jpeg" alt="Bulgarian Split Squat" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
   </div>
 
-  <!-- Ab Circuit -->
   <div class="card">
     <div class="superset-label">Ab Circuit — no rest between, 60s after each round <span class="rounds">3 rounds</span></div>
 
@@ -380,10 +697,13 @@
           <div class="ex-name">Dead Bug</div>
           <div class="ex-note">Lower back glued to floor · opposite arm+leg extend slowly</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 12</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 12</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo square">
-        <img src="imgs/Dead Bug.jpeg" alt="Dead Bug">
+        <img src="imgs/Dead Bug.jpeg" alt="Dead Bug" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -394,10 +714,13 @@
           <div class="ex-name">Hollow Body Hold</div>
           <div class="ex-note">Arms overhead · lower back flat · hold the tension</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 20s</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 20s</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Hollow Body Hold.png" alt="Hollow Body Hold">
+        <img src="imgs/Hollow Body Hold.png" alt="Hollow Body Hold" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -408,21 +731,20 @@
           <div class="ex-name">Pallof Press</div>
           <div class="ex-note">Cable or band · resist rotation · 12 each side</div>
         </div>
-        <div class="ex-sets"><div class="sets-main">3 × 12/side</div></div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 12/side</div>
+        </div>
       </div>
+      <div class="set-tracker" data-sets="3"></div>
       <div class="ex-photo">
-        <img src="imgs/Pallof Press.jpeg" alt="Pallof Press">
+        <img src="imgs/Pallof Press.jpeg" alt="Pallof Press" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
   </div>
+</div>
 
-</div><!-- /lower -->
 <div class="section-gap"></div>
 
-
-<!-- ══════════════════════════════════════════════
-     ZONE 2 CARDIO
-══════════════════════════════════════════════ -->
 <div class="workout-section" data-section="cardio" id="sec-cardio">
   <div class="section-header">
     <div class="section-badge badge-cardio">Zone 2 Cardio · Saturday</div>
@@ -437,10 +759,6 @@
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     NECK PROTOCOL
-══════════════════════════════════════════════ -->
 <div class="workout-section" data-section="neck" id="sec-neck">
   <div class="section-header">
     <div class="section-badge badge-neck">Neck Protocol · Every Session · 5 min</div>
@@ -448,7 +766,6 @@
   </div>
 
   <div class="card">
-
     <div class="neck-item">
       <div class="neck-top">
         <div class="neck-num">1</div>
@@ -458,8 +775,9 @@
         </div>
         <div class="neck-sets">15 reps</div>
       </div>
+      <div class="set-tracker" data-sets="1"></div>
       <div class="neck-photo">
-        <img src="imgs/Chin-Tucks.jpeg" alt="Chin Tucks">
+        <img src="imgs/Chin-Tucks.jpeg" alt="Chin Tucks" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -472,8 +790,9 @@
         </div>
         <div class="neck-sets">15 reps</div>
       </div>
+      <div class="set-tracker" data-sets="1"></div>
       <div class="neck-photo wide">
-        <img src="imgs/Neck Nods.jpeg" alt="Neck Nods">
+        <img src="imgs/Neck Nods.jpeg" alt="Neck Nods" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -486,8 +805,9 @@
         </div>
         <div class="neck-sets">30s hold</div>
       </div>
+      <div class="set-tracker" data-sets="1"></div>
       <div class="neck-photo">
-        <img src="imgs/Suboccipital Release.jpeg" alt="Suboccipital Release">
+        <img src="imgs/Suboccipital Release.jpeg" alt="Suboccipital Release" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
 
@@ -500,23 +820,20 @@
         </div>
         <div class="neck-sets">10 reps</div>
       </div>
+      <div class="set-tracker" data-sets="1"></div>
       <div class="neck-photo">
-        <img src="imgs/Platysma Activation.jpeg" alt="Platysma Activation">
+        <img src="imgs/Platysma Activation.jpeg" alt="Platysma Activation" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
     </div>
-
   </div>
 
   <div class="tip-box">
-    <strong>Posture reminder:</strong> Tongue on roof of mouth (behind teeth), lips closed, teeth lightly touching. Do this constantly — desk, car, surfing.
+    <strong>Posture reminder:</strong> Tongue on roof of mouth (behind teeth), lips closed, teeth lightly touching. Do this constantly: desk, car, walking, surfing.
   </div>
-</div><!-- /neck -->
+</div>
+
 <div class="section-gap"></div>
 
-
-<!-- ══════════════════════════════════════════════
-     GOLDEN RULES
-══════════════════════════════════════════════ -->
 <div class="workout-section" data-section="rules" id="sec-rules">
   <div class="section-header">
     <div class="section-badge badge-note">Golden Rules</div>
@@ -525,18 +842,23 @@
   <div class="tip-box">
     <strong>Progressive overload:</strong> Add reps or weight every week. Hit the top of the rep range easily? Go heavier next session.<br><br>
     <strong>Surf days:</strong> Surf counts. On heavy surf days cut to neck protocol + one superset only.<br><br>
-    <strong>Fasted training:</strong> Ideal to train before first meal. Coffee is fine. Boosts fat oxidation.<br><br>
-    <strong>Protein first:</strong> Every meal starts with protein. Hit 0.8–1g per lb of bodyweight daily.
+    <strong>Fasted training:</strong> Optional. Fine if you feel good, but not required for fat loss.<br><br>
+    <strong>Protein first:</strong> Every meal starts with protein. Hit 0.8–1g per lb of bodyweight daily.<br><br>
+    <strong>Extra fat-loss nudge:</strong> Optional 10–15 min incline walk after lifting if you want help with the last 10 lb.
   </div>
 </div>
+<div style="margin: 20px 0 8px;">
+  <button id="log-day-btn" type="button" class="log-day-btn">
+    Log Today
+  </button>
+</div>
 
-<footer>Phase 1 · Weeks 1–8 </footer>
+<footer>Phase 1 · Weeks 1–8</footer>
 
-
-<!-- ══════════════════════════════════════════════
-     JS — Day Filter + Scroll
-══════════════════════════════════════════════ -->
 <script>
+  const STORAGE_KEY = 'nolan-gym-checkboxes-v1';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyu_NlYfK571LgOyaMInrC1hMdKx_7Tzx41oBF7NyoGEhr-P1qE4vw3r7sYcDupJojN/exec';
+
   const dayMap = {
     MON: ['upper', 'neck'],
     TUE: ['lower', 'neck'],
@@ -549,18 +871,103 @@
 
   let activeDay = null;
 
-  function toggleDay(day) {
-    const chips    = document.querySelectorAll('.day-chip');
+  function getSavedChecks() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveChecks() {
+    const data = {};
+    document.querySelectorAll('.set-tracker input[type="checkbox"]').forEach(cb => {
+      data[cb.dataset.key] = cb.checked;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function buildTrackers() {
+    const trackers = document.querySelectorAll('.set-tracker');
+    const savedChecks = getSavedChecks();
+
+    trackers.forEach((tracker, trackerIndex) => {
+      const totalSets = parseInt(tracker.dataset.sets || '0', 10);
+      if (!totalSets || tracker.children.length) return;
+
+      for (let i = 1; i <= totalSets; i++) {
+        const storageKey = `tracker-${trackerIndex}-set-${i}`;
+
+        const label = document.createElement('label');
+        label.className = 'set-pill';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.key = storageKey;
+        checkbox.checked = !!savedChecks[storageKey];
+
+        checkbox.addEventListener('change', () => {
+          syncSetPillState(label, checkbox);
+          updateCompletionState();
+          saveChecks();
+        });
+
+        const checkVisual = document.createElement('span');
+        checkVisual.className = 'set-check';
+
+        const text = document.createElement('span');
+        text.className = 'set-label';
+        text.textContent = totalSets === 1 ? 'Done' : `Set ${i}`;
+
+        label.appendChild(checkbox);
+        label.appendChild(checkVisual);
+        label.appendChild(text);
+        tracker.appendChild(label);
+
+        syncSetPillState(label, checkbox);
+      }
+    });
+
+    updateCompletionState();
+  }
+
+  function syncSetPillState(label, checkbox) {
+    label.classList.toggle('is-checked', checkbox.checked);
+  }
+
+  function updateCompletionState() {
+    document.querySelectorAll('.exercise, .neck-item').forEach(item => {
+      const checkboxes = item.querySelectorAll('.set-tracker input[type="checkbox"]');
+      if (!checkboxes.length) return;
+
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      item.classList.toggle('completed', allChecked);
+    });
+  }
+
+  function hasAnyCheckedSets() {
+    return !!document.querySelector('.set-tracker input[type="checkbox"]:checked');
+  }
+
+  function resetAllTrackers() {
+    document.querySelectorAll('.set-tracker input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      syncSetPillState(cb.closest('.set-pill'), cb);
+    });
+    updateCompletionState();
+    saveChecks();
+  }
+
+  function applyDayFilter(day) {
+    const chips = document.querySelectorAll('.day-chip');
     const sections = document.querySelectorAll('.workout-section[data-section]');
 
-    if (activeDay === day) {
-      activeDay = null;
-      chips.forEach(c => { c.classList.remove('active-day', 'dimmed'); });
-      sections.forEach(s => { s.classList.remove('faded'); });
+    if (day === null) {
+      chips.forEach(c => c.classList.remove('active-day', 'dimmed'));
+      sections.forEach(s => s.classList.remove('faded'));
       return;
     }
 
-    activeDay = day;
     const show = dayMap[day] || [];
 
     chips.forEach(c => {
@@ -574,16 +981,130 @@
     });
 
     sections.forEach(s => {
-      show.includes(s.dataset.section)
-        ? s.classList.remove('faded')
-        : s.classList.add('faded');
+      if (show.includes(s.dataset.section)) {
+        s.classList.remove('faded');
+      } else {
+        s.classList.add('faded');
+      }
     });
 
     if (show.length > 0) {
       const target = document.getElementById('sec-' + show[0]);
-      if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+      if (target) {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+      }
     }
   }
+
+  function toggleDay(day) {
+    if (activeDay === day) {
+      activeDay = null;
+      applyDayFilter(null);
+      return;
+    }
+
+    const switchingDays = activeDay !== null && activeDay !== day;
+    const checkedAnything = hasAnyCheckedSets();
+
+    if (switchingDays && checkedAnything) {
+      const shouldReset = window.confirm('Reset checked sets before switching days? Press OK to reset, or Cancel to keep them.');
+      if (shouldReset) {
+        resetAllTrackers();
+      }
+    }
+
+    activeDay = day;
+    applyDayFilter(day);
+  }
+
+  function getRoutineLabel(day) {
+    if (['MON', 'WED', 'FRI'].includes(day)) return 'Upper';
+    if (['TUE', 'THU'].includes(day)) return 'Lower+Core';
+    if (day === 'SAT') return 'Zone 2';
+    if (day === 'SUN') return 'Rest/Surf';
+    return 'Unknown';
+  }
+
+  function getCheckedSummary() {
+    const completedExercises = [];
+    document.querySelectorAll('.exercise.completed .ex-name, .neck-item.completed .neck-name').forEach(el => {
+      completedExercises.push(el.textContent.trim());
+    });
+    return completedExercises.join(', ');
+  }
+
+  async function logCurrentDay() {
+    if (!activeDay) {
+      alert('Select a day first.');
+      return;
+    }
+
+    const notes = window.prompt('Add any notes for today? Leave blank if none.') || '';
+    const button = document.getElementById('log-day-btn');
+    const originalText = button.textContent;
+
+    const payload = {
+      timestamp: new Date().toISOString(),
+      day: activeDay,
+      routine: getRoutineLabel(activeDay),
+      completed_items: getCheckedSummary(),
+      notes: notes.trim()
+    };
+
+    try {
+      button.classList.remove('is-success', 'is-error');
+      button.classList.add('is-loading');
+      button.textContent = 'Logging...';
+
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(text || 'Request failed');
+      }
+
+      button.classList.remove('is-loading');
+      button.classList.add('is-success');
+      button.textContent = 'Logged';
+
+      setTimeout(() => {
+        button.classList.remove('is-success');
+        button.textContent = originalText;
+      }, 1800);
+
+    } catch (error) {
+      console.error(error);
+      button.classList.remove('is-loading');
+      button.classList.add('is-error');
+      button.textContent = 'Failed';
+
+      setTimeout(() => {
+        button.classList.remove('is-error');
+        button.textContent = originalText;
+      }, 1800);
+
+      alert('Could not log to Google Sheets. Make sure your Apps Script web app URL is set correctly.');
+    }
+  }
+
+  buildTrackers();
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('log-day-btn');
+    if (btn) {
+      btn.addEventListener('click', logCurrentDay);
+    }
+  });
 </script>
 
 </body>
