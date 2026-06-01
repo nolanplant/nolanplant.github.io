@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nolaani Workout Routine</title>
+<title>Workout Routine</title>
 <style>
   :root {
     --bg: #0f0f13;
@@ -75,7 +75,7 @@
   .day-chip.mobility { border-color: var(--teal); color: var(--teal); }
   .day-chip.rest   { opacity: 0.55; border-color: var(--teal); color: var(--teal); }
   .day-chip.dimmed { opacity: 0.18 !important; transform: scale(0.95); }
-  .day-chip.active-day { transform: scale(1.08); box-shadow: 0 0 14px rgba(79,142,247,0.45); }
+  .day-chip.active-day { opacity: 1 !important; transform: scale(1.08); box-shadow: 0 0 14px rgba(79,142,247,0.45); }
 
   .workout-section { transition: opacity 0.35s ease; }
   .workout-section.faded { opacity: 0.09; pointer-events: none; }
@@ -181,6 +181,79 @@
     flex-wrap: wrap;
     gap: 10px;
   }
+
+  .weight-row {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .weight-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .weight-field {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 1;
+    max-width: 200px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .weight-field:focus-within {
+    border-color: rgba(79,142,247,0.55);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.25), 0 0 0 3px rgba(79,142,247,0.12);
+  }
+
+  .weight-field input {
+    flex: 1;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 9px 4px 9px 12px;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .weight-field input::-webkit-outer-spin-button,
+  .weight-field input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .weight-field input::placeholder {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .weight-field .weight-unit {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    padding-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .weight-field.has-value {
+    border-color: rgba(62,207,142,0.4);
+  }
+
+  .weight-field.has-value input { color: var(--green); }
 
   .set-pill {
     position: relative;
@@ -1052,6 +1125,7 @@
 
 <script>
   const STORAGE_KEY = 'nolan-gym-checkboxes-v1';
+  const WEIGHT_KEY = 'nolan-gym-weights-v1';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyu_NlYfK571LgOyaMInrC1hMdKx_7Tzx41oBF7NyoGEhr-P1qE4vw3r7sYcDupJojN/exec';
 
   // Which sections show for each day. Mobility warmup + neck attach to every lift day.
@@ -1087,6 +1161,22 @@
       data[cb.dataset.key] = cb.checked;
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function getSavedWeights() {
+    try {
+      return JSON.parse(localStorage.getItem(WEIGHT_KEY) || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveWeights() {
+    const data = {};
+    document.querySelectorAll('.weight-field input').forEach(input => {
+      if (input.value !== '') data[input.dataset.key] = input.value;
+    });
+    localStorage.setItem(WEIGHT_KEY, JSON.stringify(data));
   }
 
   function buildTrackers() {
@@ -1134,6 +1224,55 @@
 
   function syncSetPillState(label, checkbox) {
     label.classList.toggle('is-checked', checkbox.checked);
+  }
+
+  function buildWeightInputs() {
+    const savedWeights = getSavedWeights();
+
+    document.querySelectorAll('.exercise').forEach((exercise, exIndex) => {
+      const tracker = exercise.querySelector('.set-tracker');
+      if (!tracker || exercise.querySelector('.weight-row')) return;
+
+      const nameEl = exercise.querySelector('.ex-name');
+      const exerciseName = nameEl ? nameEl.textContent.trim() : `exercise-${exIndex}`;
+      const storageKey = `weight-${exIndex}`;
+
+      const row = document.createElement('div');
+      row.className = 'weight-row';
+
+      const label = document.createElement('span');
+      label.className = 'weight-label';
+      label.textContent = 'Weight';
+
+      const field = document.createElement('div');
+      field.className = 'weight-field';
+
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.inputMode = 'decimal';
+      input.min = '0';
+      input.step = '0.5';
+      input.placeholder = '—';
+      input.dataset.key = storageKey;
+      input.dataset.exercise = exerciseName;
+      if (savedWeights[storageKey] != null) input.value = savedWeights[storageKey];
+
+      const unit = document.createElement('span');
+      unit.className = 'weight-unit';
+      unit.textContent = 'lb';
+
+      const syncFieldState = () => field.classList.toggle('has-value', input.value !== '');
+      input.addEventListener('input', () => { syncFieldState(); saveWeights(); });
+      syncFieldState();
+
+      field.appendChild(input);
+      field.appendChild(unit);
+      row.appendChild(label);
+      row.appendChild(field);
+
+      // place the weight row directly after the set tracker
+      tracker.insertAdjacentElement('afterend', row);
+    });
   }
 
   function updateCompletionState() {
@@ -1215,11 +1354,30 @@
     ).map(el => el.textContent.trim()).join(', ');
   }
 
+  // Collect every exercise that has a weight entered, as "Name: 45lb" pairs
+  function getWeightSummary() {
+    return Array.from(document.querySelectorAll('.weight-field input'))
+      .filter(input => input.value !== '')
+      .map(input => `${input.dataset.exercise}: ${input.value}lb`)
+      .join(', ');
+  }
+
+  function resetAllWeights() {
+    document.querySelectorAll('.weight-field input').forEach(input => {
+      input.value = '';
+      input.closest('.weight-field').classList.remove('has-value');
+    });
+    saveWeights();
+  }
+
   async function logCurrentDay() {
     if (!activeDay) {
       alert('Select a day first.');
       return;
     }
+
+    const proceed = window.confirm('Push this session to Google Sheets? Your sets will be cleared locally, but the weights stay so you can see what you last lifted.');
+    if (!proceed) return;
 
     const notes = window.prompt('Add any notes for today? Leave blank if none.') || '';
     const button = document.getElementById('log-day-btn');
@@ -1230,6 +1388,7 @@
       day: activeDay,
       routine: getRoutineLabel(activeDay),
       completed_items: getCheckedSummary(),
+      weights: getWeightSummary(),
       notes: notes.trim()
     };
 
@@ -1247,6 +1406,9 @@
 
       const text = await response.text();
       if (!response.ok) throw new Error(text || 'Request failed');
+
+      // Push succeeded — clear the checkmarks but KEEP weights as your last-lifted reference
+      resetAllTrackers();
 
       button.classList.remove('is-loading');
       button.classList.add('is-success');
@@ -1271,6 +1433,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     buildTrackers();
+    buildWeightInputs();
     const btn = document.getElementById('log-day-btn');
     if (btn) btn.addEventListener('click', logCurrentDay);
   });
