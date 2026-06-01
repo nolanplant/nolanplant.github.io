@@ -14,6 +14,7 @@
     --green: #3ecf8e;
     --orange: #f59e42;
     --red: #f76b6b;
+    --teal: #2dd4bf;
     --text: #f0f0f5;
     --muted: #8888a0;
     --border: #2e2e3e;
@@ -71,7 +72,8 @@
   .day-chip.upper  { border-color: var(--accent); color: var(--accent); }
   .day-chip.lower  { border-color: var(--accent2); color: var(--accent2); }
   .day-chip.cardio { border-color: var(--green); color: var(--green); }
-  .day-chip.rest   { opacity: 0.35; }
+  .day-chip.mobility { border-color: var(--teal); color: var(--teal); }
+  .day-chip.rest   { opacity: 0.55; border-color: var(--teal); color: var(--teal); }
   .day-chip.dimmed { opacity: 0.18 !important; transform: scale(0.95); }
   .day-chip.active-day { transform: scale(1.08); box-shadow: 0 0 14px rgba(79,142,247,0.45); }
 
@@ -98,6 +100,7 @@
   .badge-lower  { background: rgba(124,92,191,0.15);  color: var(--accent2); border: 1px solid rgba(124,92,191,0.3); }
   .badge-neck   { background: rgba(245,158,66,0.15);  color: var(--orange);  border: 1px solid rgba(245,158,66,0.3); }
   .badge-cardio { background: rgba(62,207,142,0.15);  color: var(--green);   border: 1px solid rgba(62,207,142,0.3); }
+  .badge-mobility { background: rgba(45,212,191,0.15); color: var(--teal);   border: 1px solid rgba(45,212,191,0.3); }
   .badge-note   { background: rgba(247,107,107,0.15); color: var(--red);     border: 1px solid rgba(247,107,107,0.3); }
 
   .section-line { flex: 1; height: 1px; background: var(--border); }
@@ -158,6 +161,7 @@
   .letter-a    { background: rgba(79,142,247,0.15); color: var(--accent); }
   .letter-b    { background: rgba(62,207,142,0.15); color: var(--green); }
   .letter-solo { background: rgba(124,92,191,0.15); color: var(--accent2); }
+  .letter-mob  { background: rgba(45,212,191,0.15); color: var(--teal); }
 
   .ex-text { flex: 1; }
   .ex-name { font-weight: 600; font-size: 14px; }
@@ -325,10 +329,13 @@
     margin-top: 1px;
   }
 
+  .neck-num.mob { background: rgba(45,212,191,0.15); color: var(--teal); }
+
   .neck-body { flex: 1; }
   .neck-name { font-weight: 600; font-size: 14px; }
   .neck-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .neck-sets { font-weight: 700; font-size: 13px; color: var(--orange); flex-shrink: 0; }
+  .neck-sets.mob { color: var(--teal); }
 
   .neck-photo {
     margin-top: 10px;
@@ -371,11 +378,17 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 28px;
+    margin-bottom: 10px;
+  }
+
+  .cardio-card.intervals {
+    background: rgba(247,107,107,0.07);
+    border-color: rgba(247,107,107,0.2);
   }
 
   .cardio-icon { font-size: 28px; }
   .cardio-title { font-weight: 700; font-size: 15px; color: var(--green); }
+  .cardio-card.intervals .cardio-title { color: var(--red); }
   .cardio-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
   .section-gap { margin-bottom: 28px; }
@@ -413,42 +426,43 @@
   .exercise.completed .ex-photo img {
     opacity: 0.5;
   }
-.log-day-btn {
-  width: 100%;
-  min-height: 52px;
-  border: 0;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(79,142,247,0.95), rgba(62,207,142,0.9));
-  color: #fff;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  box-shadow: 0 12px 28px rgba(79,142,247,0.22);
-  transition: transform 0.14s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
 
-.log-day-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(79,142,247,0.28);
-}
+  .log-day-btn {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(79,142,247,0.95), rgba(62,207,142,0.9));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(79,142,247,0.22);
+    transition: transform 0.14s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
 
-.log-day-btn:active {
-  transform: scale(0.98);
-}
+  .log-day-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 34px rgba(79,142,247,0.28);
+  }
 
-.log-day-btn.is-loading {
-  opacity: 0.7;
-  cursor: wait;
-}
+  .log-day-btn:active {
+    transform: scale(0.98);
+  }
 
-.log-day-btn.is-success {
-  background: linear-gradient(135deg, rgba(62,207,142,0.95), rgba(62,207,142,0.82));
-}
+  .log-day-btn.is-loading {
+    opacity: 0.7;
+    cursor: wait;
+  }
 
-.log-day-btn.is-error {
-  background: linear-gradient(135deg, rgba(247,107,107,0.95), rgba(245,158,66,0.88));
-}
+  .log-day-btn.is-success {
+    background: linear-gradient(135deg, rgba(62,207,142,0.95), rgba(62,207,142,0.82));
+  }
+
+  .log-day-btn.is-error {
+    background: linear-gradient(135deg, rgba(247,107,107,0.95), rgba(245,158,66,0.88));
+  }
 </style>
 </head>
 <body>
@@ -462,19 +476,84 @@
 </div>
 
 <div class="week">
-  <div class="day-chip upper"  data-day="MON" onclick="toggleDay('MON')"><span class="label">MON</span><span class="type">Upper</span></div>
-  <div class="day-chip lower"  data-day="TUE" onclick="toggleDay('TUE')"><span class="label">TUE</span><span class="type">Lower+Core</span></div>
-  <div class="day-chip upper"  data-day="WED" onclick="toggleDay('WED')"><span class="label">WED</span><span class="type">Upper</span></div>
-  <div class="day-chip lower"  data-day="THU" onclick="toggleDay('THU')"><span class="label">THU</span><span class="type">Lower+Core</span></div>
-  <div class="day-chip upper"  data-day="FRI" onclick="toggleDay('FRI')"><span class="label">FRI</span><span class="type">Upper</span></div>
-  <div class="day-chip cardio" data-day="SAT" onclick="toggleDay('SAT')"><span class="label">SAT</span><span class="type">Zone 2</span></div>
-  <div class="day-chip rest"   data-day="SUN" onclick="toggleDay('SUN')"><span class="label">SUN</span><span class="type">Rest/Surf</span></div>
+  <div class="day-chip upper"    data-day="MON" onclick="toggleDay('MON')"><span class="label">MON</span><span class="type">Upper</span></div>
+  <div class="day-chip lower"    data-day="TUE" onclick="toggleDay('TUE')"><span class="label">TUE</span><span class="type">Lower+Core</span></div>
+  <div class="day-chip upper"    data-day="WED" onclick="toggleDay('WED')"><span class="label">WED</span><span class="type">Upper</span></div>
+  <div class="day-chip lower"    data-day="THU" onclick="toggleDay('THU')"><span class="label">THU</span><span class="type">Lower+Core</span></div>
+  <div class="day-chip upper"    data-day="FRI" onclick="toggleDay('FRI')"><span class="label">FRI</span><span class="type">Upper</span></div>
+  <div class="day-chip cardio"   data-day="SAT" onclick="toggleDay('SAT')"><span class="label">SAT</span><span class="type">Intervals</span></div>
+  <div class="day-chip rest"     data-day="SUN" onclick="toggleDay('SUN')"><span class="label">SUN</span><span class="type">Surf+Mobility</span></div>
 </div>
 
 <div class="tip-box">
   <strong>Superset rule:</strong> A → 30s rest → B → 60s rest → repeat all rounds. Keeps the session under 45 min.
 </div>
 
+<!-- ===================== MOBILITY WARMUP ===================== -->
+<div class="workout-section" data-section="mobility" id="sec-mobility">
+  <div class="section-header">
+    <div class="section-badge badge-mobility">Mobility Warmup · Before Every Lift · 5 min</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tip-box" style="background:rgba(45,212,191,0.07);border-color:rgba(45,212,191,0.2);">
+    Stiff upper back and tight chest are what pull your head forward. This warmup unlocks them, primes your shoulders for pressing and paddling, and does more for posture than neck work alone.
+  </div>
+
+  <div class="card">
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">1</div>
+        <div class="neck-body">
+          <div class="neck-name">Thoracic Extensions</div>
+          <div class="neck-detail">Foam roller under upper back · hands behind head · arch back over the roller slowly.</div>
+        </div>
+        <div class="neck-sets mob">10 reps</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">2</div>
+        <div class="neck-body">
+          <div class="neck-name">Open Books</div>
+          <div class="neck-detail">Side-lying · knees bent · rotate top arm open, follow with eyes, feel the chest stretch.</div>
+        </div>
+        <div class="neck-sets mob">8/side</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">3</div>
+        <div class="neck-body">
+          <div class="neck-name">Doorway Pec Stretch</div>
+          <div class="neck-detail">Forearm on frame · step through · open the chest. Counters the rounded-forward look.</div>
+        </div>
+        <div class="neck-sets mob">30s/side</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">4</div>
+        <div class="neck-body">
+          <div class="neck-name">Band Shoulder Dislocates</div>
+          <div class="neck-detail">Wide grip · pass band from front to behind back with straight arms. Surf-paddle prep.</div>
+        </div>
+        <div class="neck-sets mob">10 reps</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- ===================== UPPER ===================== -->
 <div class="workout-section" data-section="upper" id="sec-upper">
   <div class="section-header">
     <div class="section-badge badge-upper">Upper Body · 3×/week</div>
@@ -587,7 +666,7 @@
         <div class="ex-letter letter-b">B</div>
         <div class="ex-text">
           <div class="ex-name">Face Pulls</div>
-          <div class="ex-note">Cable or band · pull to forehead · posture focus</div>
+          <div class="ex-note">Cable or band · pull to forehead · #1 posture move, do every session</div>
         </div>
         <div class="ex-sets">
           <div class="sets-main">3 × 15</div>
@@ -598,6 +677,40 @@
       <div class="ex-photo">
         <img src="imgs/Face Pulls.jpeg" alt="Face Pulls" onerror="this.parentElement.classList.add('hidden-photo')">
       </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="superset-label">Superset 4 — Arms / Rear Delt <span class="rounds">3 rounds</span></div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-a">A</div>
+        <div class="ex-text">
+          <div class="ex-name">Reverse Pec Deck / Band Pull-Apart</div>
+          <div class="ex-note">Second rear-delt hit · the muscle that pulls shoulders back</div>
+        </div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 15</div>
+          <div class="sets-rest">rest 30s</div>
+        </div>
+      </div>
+      <div class="set-tracker" data-sets="3"></div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-info-row">
+        <div class="ex-letter letter-b">B</div>
+        <div class="ex-text">
+          <div class="ex-name">DB Curl + Overhead Triceps</div>
+          <div class="ex-note">Superset both · 10 reps each · arm volume without adding time</div>
+        </div>
+        <div class="ex-sets">
+          <div class="sets-main">3 × 10</div>
+          <div class="sets-rest">rest 60s</div>
+        </div>
+      </div>
+      <div class="set-tracker" data-sets="3"></div>
     </div>
   </div>
 
@@ -625,6 +738,7 @@
 
 <div class="section-gap"></div>
 
+<!-- ===================== LOWER + CORE ===================== -->
 <div class="workout-section" data-section="lower" id="sec-lower">
   <div class="section-header">
     <div class="section-badge badge-lower">Lower Body + Core · 2×/week</div>
@@ -745,20 +859,97 @@
 
 <div class="section-gap"></div>
 
+<!-- ===================== CARDIO / INTERVALS ===================== -->
 <div class="workout-section" data-section="cardio" id="sec-cardio">
   <div class="section-header">
-    <div class="section-badge badge-cardio">Zone 2 Cardio · Saturday</div>
+    <div class="section-badge badge-cardio">Conditioning · Saturday</div>
     <div class="section-line"></div>
   </div>
+
+  <div class="cardio-card intervals">
+    <div class="cardio-icon">🌊</div>
+    <div>
+      <div class="cardio-title">Surf Intervals — 30s hard / 90s easy × 8–10</div>
+      <div class="cardio-desc">Rower, pool, or bike · go HARD on the 30s, easy spin on the 90s · this trains the exact burst-and-recover pattern of paddling for waves. ~20 min.</div>
+    </div>
+  </div>
+
   <div class="cardio-card">
     <div class="cardio-icon">🏃</div>
     <div>
-      <div class="cardio-title">35 min Easy Cardio</div>
-      <div class="cardio-desc">Run, bike, swim, or row · hold a full conversation the whole time · Zone 2 = ~60–70% max HR · this is NOT a hard session</div>
+      <div class="cardio-title">Or 35 min Zone 2 (alternate weeks)</div>
+      <div class="cardio-desc">Run, bike, swim, or row · hold a full conversation the whole time · ~60–70% max HR · this is the easy aerobic base. Swap with intervals week to week.</div>
     </div>
   </div>
 </div>
 
+<div class="section-gap"></div>
+
+<!-- ===================== FLEXIBILITY (SUNDAY) ===================== -->
+<div class="workout-section" data-section="flex" id="sec-flex">
+  <div class="section-header">
+    <div class="section-badge badge-mobility">Flexibility · Sunday · 10 min</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tip-box" style="background:rgba(45,212,191,0.07);border-color:rgba(45,212,191,0.2);">
+    Held stretches on their own day are what actually build range of motion. Long holds, breathe into each one. Pairs perfectly with a surf day or post-surf cooldown.
+  </div>
+
+  <div class="card">
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">1</div>
+        <div class="neck-body">
+          <div class="neck-name">Couch Stretch</div>
+          <div class="neck-detail">Rear shin up against couch/wall · opens hip flexors tightened by paddling prone.</div>
+        </div>
+        <div class="neck-sets mob">90s/side</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">2</div>
+        <div class="neck-body">
+          <div class="neck-name">Pigeon Pose</div>
+          <div class="neck-detail">Front shin across · sink hips down · glutes and hip rotators.</div>
+        </div>
+        <div class="neck-sets mob">90s/side</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">3</div>
+        <div class="neck-body">
+          <div class="neck-name">Deep Squat Hold</div>
+          <div class="neck-detail">Heels down · elbows pushing knees out · ankle and hip mobility for pop-ups.</div>
+        </div>
+        <div class="neck-sets mob">60s</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+
+    <div class="neck-item">
+      <div class="neck-top">
+        <div class="neck-num mob">4</div>
+        <div class="neck-body">
+          <div class="neck-name">Lat + Thoracic Stretch</div>
+          <div class="neck-detail">Hands on a bench/ledge · sink chest down · long spine pull. Posture and overhead reach.</div>
+        </div>
+        <div class="neck-sets mob">60s</div>
+      </div>
+      <div class="set-tracker" data-sets="1"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-gap"></div>
+
+<!-- ===================== NECK PROTOCOL ===================== -->
 <div class="workout-section" data-section="neck" id="sec-neck">
   <div class="section-header">
     <div class="section-badge badge-neck">Neck Protocol · Every Session · 5 min</div>
@@ -834,6 +1025,7 @@
 
 <div class="section-gap"></div>
 
+<!-- ===================== GOLDEN RULES ===================== -->
 <div class="workout-section" data-section="rules" id="sec-rules">
   <div class="section-header">
     <div class="section-badge badge-note">Golden Rules</div>
@@ -841,12 +1033,15 @@
   </div>
   <div class="tip-box">
     <strong>Progressive overload:</strong> Add reps or weight every week. Hit the top of the rep range easily? Go heavier next session.<br><br>
+    <strong>Watch shoulder volume:</strong> Pressing, raises, and paddling all hit the same area. If shoulders feel cranky, cut a set — don't push through.<br><br>
+    <strong>Spot reduction myth:</strong> Neck exercises tone and improve posture, but the turkey-neck look fades through overall lower body fat + posture, not neck reps alone.<br><br>
     <strong>Surf days:</strong> Surf counts. On heavy surf days cut to neck protocol + one superset only.<br><br>
-    <strong>Fasted training:</strong> Optional. Fine if you feel good, but not required for fat loss.<br><br>
     <strong>Protein first:</strong> Every meal starts with protein. Hit 0.8–1g per lb of bodyweight daily.<br><br>
+    <strong>Sleep:</strong> The cheapest results-accelerator. Recovery is where the adaptation happens.<br><br>
     <strong>Extra fat-loss nudge:</strong> Optional 10–15 min incline walk after lifting if you want help with the last 10 lb.
   </div>
 </div>
+
 <div style="margin: 20px 0 8px;">
   <button id="log-day-btn" type="button" class="log-day-btn">
     Log Today
@@ -859,14 +1054,21 @@
   const STORAGE_KEY = 'nolan-gym-checkboxes-v1';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyu_NlYfK571LgOyaMInrC1hMdKx_7Tzx41oBF7NyoGEhr-P1qE4vw3r7sYcDupJojN/exec';
 
+  // Which sections show for each day. Mobility warmup + neck attach to every lift day.
   const dayMap = {
-    MON: ['upper', 'neck'],
-    TUE: ['lower', 'neck'],
-    WED: ['upper', 'neck'],
-    THU: ['lower', 'neck'],
-    FRI: ['upper', 'neck'],
+    MON: ['mobility', 'upper', 'neck'],
+    TUE: ['mobility', 'lower', 'neck'],
+    WED: ['mobility', 'upper', 'neck'],
+    THU: ['mobility', 'lower', 'neck'],
+    FRI: ['mobility', 'upper', 'neck'],
     SAT: ['cardio'],
-    SUN: []
+    SUN: ['flex']
+  };
+
+  const ROUTINE_LABELS = {
+    MON: 'Upper', WED: 'Upper', FRI: 'Upper',
+    TUE: 'Lower+Core', THU: 'Lower+Core',
+    SAT: 'Intervals', SUN: 'Surf+Mobility'
   };
 
   let activeDay = null;
@@ -888,10 +1090,9 @@
   }
 
   function buildTrackers() {
-    const trackers = document.querySelectorAll('.set-tracker');
     const savedChecks = getSavedChecks();
 
-    trackers.forEach((tracker, trackerIndex) => {
+    document.querySelectorAll('.set-tracker').forEach((tracker, trackerIndex) => {
       const totalSets = parseInt(tracker.dataset.sets || '0', 10);
       if (!totalSets || tracker.children.length) return;
 
@@ -939,7 +1140,6 @@
     document.querySelectorAll('.exercise, .neck-item').forEach(item => {
       const checkboxes = item.querySelectorAll('.set-tracker input[type="checkbox"]');
       if (!checkboxes.length) return;
-
       const allChecked = Array.from(checkboxes).every(cb => cb.checked);
       item.classList.toggle('completed', allChecked);
     });
@@ -971,29 +1171,19 @@
     const show = dayMap[day] || [];
 
     chips.forEach(c => {
-      if (c.dataset.day === day) {
-        c.classList.add('active-day');
-        c.classList.remove('dimmed');
-      } else {
-        c.classList.remove('active-day');
-        c.classList.add('dimmed');
-      }
+      const isActive = c.dataset.day === day;
+      c.classList.toggle('active-day', isActive);
+      c.classList.toggle('dimmed', !isActive);
     });
 
     sections.forEach(s => {
-      if (show.includes(s.dataset.section)) {
-        s.classList.remove('faded');
-      } else {
-        s.classList.add('faded');
-      }
+      s.classList.toggle('faded', !show.includes(s.dataset.section));
     });
 
     if (show.length > 0) {
       const target = document.getElementById('sec-' + show[0]);
       if (target) {
-        setTimeout(() => {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 80);
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
       }
     }
   }
@@ -1006,13 +1196,9 @@
     }
 
     const switchingDays = activeDay !== null && activeDay !== day;
-    const checkedAnything = hasAnyCheckedSets();
-
-    if (switchingDays && checkedAnything) {
+    if (switchingDays && hasAnyCheckedSets()) {
       const shouldReset = window.confirm('Reset checked sets before switching days? Press OK to reset, or Cancel to keep them.');
-      if (shouldReset) {
-        resetAllTrackers();
-      }
+      if (shouldReset) resetAllTrackers();
     }
 
     activeDay = day;
@@ -1020,19 +1206,13 @@
   }
 
   function getRoutineLabel(day) {
-    if (['MON', 'WED', 'FRI'].includes(day)) return 'Upper';
-    if (['TUE', 'THU'].includes(day)) return 'Lower+Core';
-    if (day === 'SAT') return 'Zone 2';
-    if (day === 'SUN') return 'Rest/Surf';
-    return 'Unknown';
+    return ROUTINE_LABELS[day] || 'Unknown';
   }
 
   function getCheckedSummary() {
-    const completedExercises = [];
-    document.querySelectorAll('.exercise.completed .ex-name, .neck-item.completed .neck-name').forEach(el => {
-      completedExercises.push(el.textContent.trim());
-    });
-    return completedExercises.join(', ');
+    return Array.from(
+      document.querySelectorAll('.exercise.completed .ex-name, .neck-item.completed .neck-name')
+    ).map(el => el.textContent.trim()).join(', ');
   }
 
   async function logCurrentDay() {
@@ -1061,22 +1241,16 @@
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'cors',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
 
       const text = await response.text();
-
-      if (!response.ok) {
-        throw new Error(text || 'Request failed');
-      }
+      if (!response.ok) throw new Error(text || 'Request failed');
 
       button.classList.remove('is-loading');
       button.classList.add('is-success');
       button.textContent = 'Logged';
-
       setTimeout(() => {
         button.classList.remove('is-success');
         button.textContent = originalText;
@@ -1087,23 +1261,18 @@
       button.classList.remove('is-loading');
       button.classList.add('is-error');
       button.textContent = 'Failed';
-
       setTimeout(() => {
         button.classList.remove('is-error');
         button.textContent = originalText;
       }, 1800);
-
       alert('Could not log to Google Sheets. Make sure your Apps Script web app URL is set correctly.');
     }
   }
 
-  buildTrackers();
-
   document.addEventListener('DOMContentLoaded', () => {
+    buildTrackers();
     const btn = document.getElementById('log-day-btn');
-    if (btn) {
-      btn.addEventListener('click', logCurrentDay);
-    }
+    if (btn) btn.addEventListener('click', logCurrentDay);
   });
 </script>
 
