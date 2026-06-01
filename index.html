@@ -77,8 +77,8 @@
   .day-chip.dimmed { opacity: 0.18 !important; transform: scale(0.95); }
   .day-chip.active-day { opacity: 1 !important; transform: scale(1.08); box-shadow: 0 0 14px rgba(79,142,247,0.45); }
 
-  .workout-section { transition: opacity 0.35s ease; }
-  .workout-section.faded { opacity: 0.09; pointer-events: none; }
+  .workout-section { transition: opacity 0.35s ease; margin-bottom: 28px; }
+  .workout-section.faded { display: none; }
 
   .section-header {
     display: flex;
@@ -464,8 +464,6 @@
   .cardio-card.intervals .cardio-title { color: var(--red); }
   .cardio-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-  .section-gap { margin-bottom: 28px; }
-
   footer {
     text-align: center;
     color: var(--muted);
@@ -623,8 +621,6 @@
     </div>
   </div>
 </div>
-
-<div class="section-gap"></div>
 
 <!-- ===================== UPPER ===================== -->
 <div class="workout-section" data-section="upper" id="sec-upper">
@@ -809,8 +805,6 @@
   </div>
 </div>
 
-<div class="section-gap"></div>
-
 <!-- ===================== LOWER + CORE ===================== -->
 <div class="workout-section" data-section="lower" id="sec-lower">
   <div class="section-header">
@@ -930,8 +924,6 @@
   </div>
 </div>
 
-<div class="section-gap"></div>
-
 <!-- ===================== CARDIO / INTERVALS ===================== -->
 <div class="workout-section" data-section="cardio" id="sec-cardio">
   <div class="section-header">
@@ -955,8 +947,6 @@
     </div>
   </div>
 </div>
-
-<div class="section-gap"></div>
 
 <!-- ===================== FLEXIBILITY (SUNDAY) ===================== -->
 <div class="workout-section" data-section="flex" id="sec-flex">
@@ -1019,8 +1009,6 @@
     </div>
   </div>
 </div>
-
-<div class="section-gap"></div>
 
 <!-- ===================== NECK PROTOCOL ===================== -->
 <div class="workout-section" data-section="neck" id="sec-neck">
@@ -1096,8 +1084,6 @@
   </div>
 </div>
 
-<div class="section-gap"></div>
-
 <!-- ===================== GOLDEN RULES ===================== -->
 <div class="workout-section" data-section="rules" id="sec-rules">
   <div class="section-header">
@@ -1109,9 +1095,9 @@
     <strong>Watch shoulder volume:</strong> Pressing, raises, and paddling all hit the same area. If shoulders feel cranky, cut a set — don't push through.<br><br>
     <strong>Spot reduction myth:</strong> Neck exercises tone and improve posture, but the turkey-neck look fades through overall lower body fat + posture, not neck reps alone.<br><br>
     <strong>Surf days:</strong> Surf counts. On heavy surf days cut to neck protocol + one superset only.<br><br>
-    <strong>Protein first:</strong> Every meal starts with protein. Hit 0.8–1g per lb of bodyweight daily.<br><br>
+    <strong>Protein first:</strong> Every meal starts with protein. Hit 1.6–2.2g per kg of bodyweight daily.<br><br>
     <strong>Sleep:</strong> The cheapest results-accelerator. Recovery is where the adaptation happens.<br><br>
-    <strong>Extra fat-loss nudge:</strong> Optional 10–15 min incline walk after lifting if you want help with the last 10 lb.
+    <strong>Extra fat-loss nudge:</strong> Optional 10–15 min incline walk after lifting if you want help with the last few kg.
   </div>
 </div>
 
@@ -1263,7 +1249,7 @@
 
       const unit = document.createElement('span');
       unit.className = 'weight-unit';
-      unit.textContent = 'lb';
+      unit.textContent = 'kg';
 
       const syncFieldState = () => field.classList.toggle('has-value', input.value !== '');
       input.addEventListener('input', () => { syncFieldState(); saveWeights(); });
@@ -1355,11 +1341,11 @@
     ).map(el => el.textContent.trim()).join(', ');
   }
 
-  // Collect every exercise that has a weight entered, as "Name: 45lb" pairs
+  // Collect every exercise that has a weight entered, as "Name: 45kg" pairs
   function getWeightSummary() {
     return Array.from(document.querySelectorAll('.weight-field input'))
       .filter(input => input.value !== '')
-      .map(input => `${input.dataset.exercise}: ${input.value}lb`)
+      .map(input => `${input.dataset.exercise}: ${input.value}kg`)
       .join(', ');
   }
 
