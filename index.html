@@ -1160,7 +1160,9 @@
     document.querySelectorAll('.set-tracker input[type="checkbox"]').forEach(cb => {
       data[cb.dataset.key] = cb.checked;
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) { /* storage unavailable (private mode / file origin) — ignore */ }
   }
 
   function getSavedWeights() {
@@ -1176,7 +1178,9 @@
     document.querySelectorAll('.weight-field input').forEach(input => {
       if (input.value !== '') data[input.dataset.key] = input.value;
     });
-    localStorage.setItem(WEIGHT_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(WEIGHT_KEY, JSON.stringify(data));
+    } catch (e) { /* storage unavailable — ignore */ }
   }
 
   function buildTrackers() {
@@ -1328,18 +1332,15 @@
   }
 
   function toggleDay(day) {
+    // Tapping the active day again clears the filter (shows everything)
     if (activeDay === day) {
       activeDay = null;
       applyDayFilter(null);
       return;
     }
 
-    const switchingDays = activeDay !== null && activeDay !== day;
-    if (switchingDays && hasAnyCheckedSets()) {
-      const shouldReset = window.confirm('Reset checked sets before switching days? Press OK to reset, or Cancel to keep them.');
-      if (shouldReset) resetAllTrackers();
-    }
-
+    // Switching days only changes the view — it never touches your checkmarks or weights.
+    // Only "Log Today" clears progress, and even then weights are kept.
     activeDay = day;
     applyDayFilter(day);
   }
