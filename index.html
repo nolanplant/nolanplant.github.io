@@ -255,6 +255,32 @@
 
   .weight-field.has-value input { color: var(--green); }
 
+  /* Reps field: sits next to weight, shares the same look but narrower */
+  .reps-field {
+    max-width: 130px;
+  }
+
+  .reps-field .weight-unit {
+    /* "reps" unit label */
+  }
+
+  /* Session-gap banner at the top */
+  .gap-banner {
+    margin: 14px 0 4px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+    color: var(--muted);
+  }
+
+  .gap-banner.fresh { border-color: rgba(62,207,142,0.4); color: var(--green); }
+  .gap-banner.warn  { border-color: rgba(247,181,79,0.45); color: #f7b54f; }
+  .gap-banner.stale { border-color: rgba(247,107,107,0.5); color: #f76b6b; }
+
   .set-pill {
     position: relative;
     display: inline-flex;
@@ -540,6 +566,7 @@
 
 <h1>Gym Plan 💪</h1>
 <p class="subtitle">45 min · Phase 1 · Tap a day to filter</p>
+<div id="gap-banner" class="gap-banner" style="display:none;"></div>
 
 <div class="section-header">
   <div class="section-badge badge-upper">Week Schedule</div>
@@ -1112,6 +1139,8 @@
 <script>
   const STORAGE_KEY = 'nolan-gym-checkboxes-v1';
   const WEIGHT_KEY = 'nolan-gym-weights-v1';
+  const REPS_KEY = 'nolan-gym-reps-v1';
+  const LASTLOG_KEY = 'nolan-gym-lastlog-v1';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyu_NlYfK571LgOyaMInrC1hMdKx_7Tzx41oBF7NyoGEhr-P1qE4vw3r7sYcDupJojN/exec';
 
   // Which sections show for each day. Mobility warmup + neck attach to every lift day.
@@ -1166,6 +1195,24 @@
     });
     try {
       localStorage.setItem(WEIGHT_KEY, JSON.stringify(data));
+    } catch (e) { /* storage unavailable — ignore */ }
+  }
+
+  function getSavedReps() {
+    try {
+      return JSON.parse(localStorage.getItem(REPS_KEY) || '{}');
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveReps() {
+    const data = {};
+    document.querySelectorAll('.reps-field input').forEach(input => {
+      if (input.value !== '') data[input.dataset.key] = input.value;
+    });
+    try {
+      localStorage.setItem(REPS_KEY, JSON.stringify(data));
     } catch (e) { /* storage unavailable — ignore */ }
   }
 
@@ -1260,6 +1307,35 @@
       row.appendChild(label);
       row.appendChild(field);
 
+      // Reps field: optional "top set" reps so progressive overload is visible
+      const savedReps = getSavedReps();
+      const repsKey = `reps-${exIndex}`;
+
+      const repsField = document.createElement('div');
+      repsField.className = 'weight-field reps-field';
+
+      const repsInput = document.createElement('input');
+      repsInput.type = 'number';
+      repsInput.inputMode = 'numeric';
+      repsInput.min = '0';
+      repsInput.step = '1';
+      repsInput.placeholder = '—';
+      repsInput.dataset.key = repsKey;
+      repsInput.dataset.exercise = exerciseName;
+      if (savedReps[repsKey] != null) repsInput.value = savedReps[repsKey];
+
+      const repsUnit = document.createElement('span');
+      repsUnit.className = 'weight-unit';
+      repsUnit.textContent = 'reps';
+
+      const syncRepsState = () => repsField.classList.toggle('has-value', repsInput.value !== '');
+      repsInput.addEventListener('input', () => { syncRepsState(); saveReps(); });
+      syncRepsState();
+
+      repsField.appendChild(repsInput);
+      repsField.appendChild(repsUnit);
+      row.appendChild(repsField);
+
       // place the weight row directly after the set tracker
       tracker.insertAdjacentElement('afterend', row);
     });
@@ -1343,9 +1419,17 @@
 
   // Collect every exercise that has a weight entered, as "Name: 45kg" pairs
   function getWeightSummary() {
-    return Array.from(document.querySelectorAll('.weight-field input'))
+    return Array.from(document.querySelectorAll('.weight-field:not(.reps-field) input'))
       .filter(input => input.value !== '')
       .map(input => `${input.dataset.exercise}: ${input.value}kg`)
+      .join(', ');
+  }
+
+  // Collect top-set reps as "Name: 10 reps" pairs
+  function getRepsSummary() {
+    return Array.from(document.querySelectorAll('.reps-field input'))
+      .filter(input => input.value !== '')
+      .map(input => `${input.dataset.exercise}: ${input.value} reps`)
       .join(', ');
   }
 
@@ -1357,6 +1441,28 @@
     saveWeights();
   }
 
+  function renderGapBanner() {
+    const banner = document.getElementById('gap-banner');
+    if (!banner) return;
+    const last = localStorage.getItem(LASTLOG_KEY);
+    if (!last) {
+      banner.style.display = '';
+      banner.className = 'gap-banner';
+      banner.textContent = 'No sessions logged yet on this device. Log one to start the streak.';
+      return;
+    }
+    const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+    banner.style.display = '';
+    let cls = 'fresh', msg;
+    if (days <= 0) msg = 'Last session: today. Nice.';
+    else if (days === 1) msg = 'Last session: yesterday.';
+    else msg = `Last session: ${days} days ago.`;
+    if (days >= 3 && days <= 6) { cls = 'warn'; msg += ' Time to get back in.'; }
+    if (days >= 7) { cls = 'stale'; msg += ' This is the gap that stalls progress — go.'; }
+    banner.className = 'gap-banner ' + cls;
+    banner.textContent = msg;
+  }
+
   async function logCurrentDay() {
     if (!activeDay) {
       alert('Select a day first.');
@@ -1366,6 +1472,7 @@
     const proceed = window.confirm('Push this session to Google Sheets? Your sets will be cleared locally, but the weights stay so you can see what you last lifted.');
     if (!proceed) return;
 
+    const bodyweight = window.prompt('Bodyweight today in kg? (optional — leave blank to skip)') || '';
     const notes = window.prompt('Add any notes for today? Leave blank if none.') || '';
     const button = document.getElementById('log-day-btn');
     const originalText = button.textContent;
@@ -1376,6 +1483,8 @@
       routine: getRoutineLabel(activeDay),
       completed_items: getCheckedSummary(),
       weights: getWeightSummary(),
+      reps: getRepsSummary(),
+      bodyweight: bodyweight.trim(),
       notes: notes.trim()
     };
 
@@ -1396,6 +1505,9 @@
 
       // Push succeeded — clear the checkmarks but KEEP weights as your last-lifted reference
       resetAllTrackers();
+
+      try { localStorage.setItem(LASTLOG_KEY, new Date().toISOString()); } catch (e) {}
+      renderGapBanner();
 
       button.classList.remove('is-loading');
       button.classList.add('is-success');
@@ -1421,6 +1533,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     buildTrackers();
     buildWeightInputs();
+    renderGapBanner();
     const btn = document.getElementById('log-day-btn');
     if (btn) btn.addEventListener('click', logCurrentDay);
   });
